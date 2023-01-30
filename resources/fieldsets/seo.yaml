@@ -1,0 +1,200 @@
+title: SEO
+fields:
+  -
+    handle: section_basic
+    field:
+      type: section
+      instructions: 'Einfache SEO Einstellungen'
+      display: 'Einfache Einstellungen'
+      instructions_position: above
+      listable: hidden
+  -
+    handle: seo_title
+    field:
+      input_type: text
+      type: text
+      localizable: true
+      listable: hidden
+      display: 'Titel der Seite'
+      character_limit: 70
+      instructions: 'Standardisiert wird auf den Titel der Seite zurück gegriffen. Die max. Zeichenlänge beträgt 70 Zeichen.'
+      instructions_position: above
+      antlers: false
+  -
+    handle: seo_description
+    field: common.text_plain
+    config:
+      listable: hidden
+      display: 'Meta Beschreibung'
+      character_limit: '160'
+      instructions: 'Die max. Zeichenlänge der Meta Beschreibung beträgt 160 Zeichen.'
+  -
+    handle: section_advanced
+    field:
+      type: section
+      instructions: 'Weitere SEO Einstellungen'
+      display: 'Weitere, tiefgreifendere Einstellungen'
+      instructions_position: above
+      listable: hidden
+  -
+    handle: seo_noindex
+    field:
+      type: toggle
+      instructions: 'Diese Seite soll vom Crawler nicht indexiert und von der sitemap.xml ausgeschlossen werden.'
+      listable: hidden
+      width: 50
+      display: No-index
+      instructions_position: above
+      default: false
+  -
+    handle: seo_nofollow
+    field:
+      type: toggle
+      instructions: 'Alle vorhandenen Links auf dieser Seite sollen vom Crawler nicht verfolgt werden.'
+      listable: hidden
+      width: 50
+      display: No-follow
+      instructions_position: above
+      default: false
+  -
+    handle: seo_canonical_type
+    field:
+      options:
+        entry: 'Aktuelle Seite'
+        current: 'Aktuelle Domain'
+        external: 'Externe Domain'
+      display: 'Canonical URL'
+      type: button_group
+      default: entry
+      icon: button_group
+      instructions: 'Wohin soll die Canonical URL dieser Seite verlinken?'
+      listable: hidden
+      instructions_position: above
+  -
+    handle: seo_canonical_current
+    field: common.entry
+    config:
+      listable: hidden
+      display: 'Canonical URL'
+      localizable: true
+      width: 66
+      instructions: 'Falls diese Seite kopierten Inhalt beinhaltet, kann hier die Quelle des Inhalts angegeben werden.'
+      validate:
+        - 'required_if:seo_canonical_type,current'
+      if:
+        seo_canonical_type: 'equals current'
+  -
+    handle: seo_canonical_external
+    field:
+      input_type: url
+      display: 'Canonical URL'
+      type: text
+      icon: text
+      listable: hidden
+      validate:
+        - 'required_if:seo_canonical_type,external'
+      if:
+        seo_canonical_type: 'equals external'
+  -
+    handle: section_og
+    field:
+      type: section
+      instructions: 'Open Graph Meta Tags'
+      display: 'Open Graph'
+      instructions_position: above
+      listable: hidden
+  -
+    handle: og_title
+    field:
+      input_type: text
+      type: text
+      localizable: true
+      listable: hidden
+      display: OG-Titel
+      instructions: 'Standardisiert wird der SEO-Titel plus Titel der Webseite angezeigt.'
+      instructions_position: above
+      antlers: false
+  -
+    handle: og_description
+    field: common.text_plain
+    config:
+      listable: hidden
+      display: OG-Beschreibung
+      instructions: 'Standardisiert wird auf die Meta Beschreibung zurück gegriffen.'
+      width: 100
+  -
+    handle: og_image
+    field: common.image
+    config:
+      listable: hidden
+      display: OG-Bild
+      instructions: 'Standardisiert wird das default OG-Bild der Webseite genutzt. Die empfohlene Größe beträgt 1200px x 630px, da ansonsten das Bild zu diesem Format zugeschnitten wird.'
+      width: 50
+  -
+    handle: twitter_image
+    field: common.image
+    config:
+      listable: hidden
+      display: 'Twitter Bild'
+      instructions: 'Standardisiert wird das default Twitter-Bild der Webseite genutzt. Das Seitenverhältnis sollte 2:1 bei einer minimalen Größe von 300x157px betragen, da ansonsten das Bild zu diesem Format zugeschnitten wird.'
+      width: 50
+  -
+    handle: section_sitemap
+    field:
+      type: section
+      instructions: 'Einstellungen der Sitemap'
+      display: Sitemap
+      instructions_position: above
+      listable: hidden
+  -
+    handle: sitemap_change_frequency
+    field:
+      options:
+        always: Immer
+        hourly: Stündlich
+        daily: Täglich
+        weekly: Wöchentlich
+        monthly: Monatlich
+        yearly: Jährlich
+        never: Nie
+      clearable: false
+      multiple: false
+      searchable: true
+      taggable: false
+      push_tags: false
+      cast_booleans: false
+      type: select
+      instructions: 'Wie oft soll die Suchmaschine die Sitemap untersuchen?'
+      width: 50
+      default: weekly
+      listable: hidden
+      display: 'Frequenz des Sitemap-Crawlings'
+      instructions_position: above
+  -
+    handle: sitemap_priority
+    field:
+      type: text
+      display: 'Priorität der Sitemap'
+      default: 0.5
+      instructions: 'Wert zwischen  0.0 und 1.0 möglich. Diese Angabe lässt den Crawler lediglich wissen, welche Seiten für Sie eine erhöhte Priorität für eine Untersuchung haben.'
+      width: 50
+      listable: hidden
+      instructions_position: above
+      input_type: text
+      antlers: false
+  -
+    handle: section_schema
+    field:
+      type: section
+      instructions: 'Benutzerdefinierte JSON-ld-Schemaobjekte'
+      display: 'JSON-ld Schema'
+      instructions_position: above
+      listable: hidden
+  -
+    handle: schema_jsonld
+    field: common.text_plain
+    config:
+      listable: false
+      display: 'JSON-ld Schema'
+      instructions: 'Die benutzerdefinierten JSON-ld-Schemaobjekte werden von einem angemessen Script-Tag umschlossen.'
+      width: 100

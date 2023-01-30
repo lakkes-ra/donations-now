@@ -1,0 +1,67 @@
+stages:
+  - build
+  - deploy
+
+build-be:
+  stage: build
+  image: composer:2
+  script:
+    - composer install --ignore-platform-reqs --optimize-autoloader --no-ansi --no-suggest --no-interaction --no-dev
+  artifacts:
+    expire_in: 30 min
+    paths:
+      - vendor
+
+build-fe:
+  stage: build
+  image: node:14
+  script:
+    - npm ci
+    - npm run production
+  artifacts:
+    expire_in: 30 min
+    paths:
+      - public
+
+# deploy:
+#   stage: deploy
+#   tags:
+#     - docker
+#   rules:
+#     - if: '$CI_COMMIT_BRANCH == "main"'
+#   image: alpine
+#   needs:
+#     - build-be
+#     - build-fe
+#   before_script:
+#     - apk add openssh-client
+#     - apk add rsync
+#     - eval $(ssh-agent -s)
+#     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+#     - mkdir -p ~/.ssh
+#     - chmod 700 ~/.ssh
+#   script:
+#     - >
+#       ssh -o StrictHostKeyChecking=no forge@domain.de "
+#         cd /home/forge/domain.de && php artisan down
+#       "
+#     - >
+#       rsync -av -e "ssh -o StrictHostKeyChecking=no" --delete --exclude="public/assets" --exclude="public/cached_images" --exclude="resources/users"
+#       app bootstrap config public routes resources vendor artisan please composer.json composer.lock
+#       forge@domain.de:/home/forge/domain.de
+#     - >
+#       ssh -o StrictHostKeyChecking=no forge@domain.de "
+#         cd /home/forge/domain.de &&
+#         mkdir -p storage/framework/{sessions,views,cache} &&
+#         php artisan statamic:install &&
+#         php artisan optimize:clear &&
+#         php please stache:warm &&
+#         # php please static:clear &&
+#         # php please static:warm &&
+#         php artisan optimize &&
+#         php -r 'opcache_reset();'
+#       "
+#     - >
+#       ssh -o StrictHostKeyChecking=no forge@domain.de "
+#         cd /home/forge/domain.de && php artisan up
+#       "

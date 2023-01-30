@@ -1,0 +1,108 @@
+sections:
+  contact:
+    display: Kontakt
+    fields:
+      -
+        handle: section_contact
+        field:
+          display: 'Kontaktdaten anlegen'
+          type: section
+          icon: section
+          instructions: 'Hier können Kontaktdaten angelegt werden, die überall auf der Webseite wiederverwendet werden können.'
+          listable: hidden
+          instructions_position: above
+      -
+        handle: address
+        field:
+          antlers: false
+          display: Adresse
+          type: textarea
+          icon: textarea
+          listable: hidden
+          instructions_position: above
+      -
+        handle: mail
+        field:
+          input_type: text
+          prepend: 'Mail:'
+          antlers: false
+          display: 'E-Mail Adresse'
+          type: text
+          icon: text
+          listable: hidden
+          instructions_position: above
+      -
+        handle: phone
+        field:
+          placeholder: '+ 49 0123 456 789'
+          input_type: text
+          prepend: 'TEL:'
+          antlers: false
+          display: 'Telefon-Nummer (sichtbar)'
+          type: text
+          icon: text
+          instructions: 'Sichtbare Telefon-Nummer. Sonderzeichen sind erlaubt.'
+          width: 50
+          listable: hidden
+          instructions_position: above
+      -
+        handle: phone_url
+        field:
+          placeholder: '0049123456789'
+          input_type: text
+          prepend: 'TEL:'
+          antlers: false
+          display: 'Telefon-Nummer (für Verlinkung)'
+          type: text
+          icon: text
+          instructions: 'Nummer für die Verlinkung. Sonderzeichen oder Leerzeichen sind nicht erlaubt.'
+          width: 50
+          listable: hidden
+          instructions_position: above
+  social-media:
+    display: 'Social Media'
+    fields:
+      -
+        handle: socials
+        field:
+          collapse: false
+          sets:
+            channel:
+              display: 'Sozial-Media Kanal'
+              fields:
+                -
+                  handle: icon
+                  field: common.image
+                  config:
+                    display: Icon
+                    width: 50
+                -
+                  handle: label
+                  field:
+                    placeholder: 'Verlinkung zu unserem Facebook-Kanal'
+                    input_type: text
+                    antlers: false
+                    display: Beschreibung
+                    type: text
+                    icon: text
+                    instructions: 'Beschreibung des Links für Screenreader als *aria-label*'
+                    width: 50
+                    listable: hidden
+                    instructions_position: above
+                -
+                  handle: url
+                  field:
+                    input_type: text
+                    prepend: 'URL:'
+                    antlers: false
+                    display: Link
+                    type: text
+                    icon: text
+                    listable: hidden
+                    instructions_position: above
+          display: 'Soziale Medien'
+          type: replicator
+          icon: replicator
+          instructions: 'Kanäle der Sozialen Medien'
+          listable: hidden
+          instructions_position: above

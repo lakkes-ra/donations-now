@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+
+echo -e "\033[35m   ________________   ____________ \033[0m"
+echo -e "\033[35m  / ___/_  __/  _/ | / /  _/_  __/ \033[0m"
+echo -e "\033[35m  \__ \ / /  / //  |/ // /  / /    \033[0m"
+echo -e "\033[35m ___/ // / _/ // /|  // /  / /     \033[0m"
+echo -e "\033[35m/____//_/ /___/_/ |_/___/ /_/      \033[0m"
+
+cat << EOF
+
+🔥 Statamic init script 🔥
+by visuellverstehen.de
+
+EOF
+
+echo '🚀 Your secrets please.'
+echo '----------------'
+read -p 'Your project brand vvcode (project): ' brandVvcode
+read -p 'Your personal vvcode (developer): '  developerVvcode
+echo ''
+extensionName=$(perl -e "print ucfirst($brandVvcode)")
+operatingSystem=$(uname)
+
+echo '✅ Remove .git directory'
+rm -rf .git
+echo ''
+
+echo '✅ Create new README file'
+rm README.md
+cat >README.md <<EOL
+<p align="center"><img src="https://statamic.com/assets/branding/Statamic-Logo+Wordmark-Rad.svg" width="400" alt="Statamic Logo" /></p>
+
+| -                | -                                      |
+| ------           | ------                                 |
+| Brand (vvcode)   | $brandVvcode                           |
+| Developer vvcode | $developerVvcode                       |
+| Extension name   | Stinit                                 |
+EOL
+echo ''
+
+echo 'Rename content in all files'
+echo '---------------------------'
+if [ $operatingSystem == "Darwin" ];
+then
+  find -E . -iregex '.*\.(gitignore|yml|yaml|htaccess|md|Dockerfile|php_cs|php|ts|typoscript|txt|json|js|html|css|scss|xlf|xml)' -type f -print0 | xargs -0 sed -i '' 's/stinit/'"$brandVvcode"'/g'
+  find -E . -iregex '.*\.(gitignore|yml|yaml|htaccess|md|Dockerfile|php_cs|php|ts|typoscript|txt|json|js|html|css|scss|xlf|xml)' -type f -print0 | xargs -0 sed -i '' 's/Stinit/'"$extensionName"'/g'
+  find -E . -iregex '.*\.(gitignore|yml|yaml|htaccess|md|Dockerfile|php_cs|php|ts|typoscript|txt|json|js|html|css|scss|xlf|xml)' -type f -print0 | xargs -0 sed -i '' 's/p000000/'"$pNumber"'/g'
+else
+  find . -regex '.*\.\(gitignore\|yml\|yaml\|htaccess\|md\|Dockerfile\|php_cs\|php\|ts\|typoscript\|txt\|json\|js\|html\|css\|scss\|xlf\|xml\)' -type f -print0 | xargs -0 sed -i 's/stinit/'"$brandVvcode"'/g'
+  find . -regex '.*\.\(gitignore\|yml\|yaml\|htaccess\|md\|Dockerfile\|php_cs\|php\|ts\|typoscript\|txt\|json\|js\|html\|css\|scss\|xlf\|xml\)' -type f -print0 | xargs -0 sed -i 's/Stinit/'"$extensionName"'/g'
+  find . -regex '.*\.\(gitignore\|yml\|yaml\|htaccess\|md\|Dockerfile\|php_cs\|php\|ts\|typoscript\|txt\|json\|js\|html\|css\|scss\|xlf\|xml\)' -type f -print0 | xargs -0 sed -i 's/p000000/'"$pNumber"'/g'
+fi
+echo ''
+
+
+echo '✅ Starting Docker'
+echo ''
+docker-compose up -d --build
+echo ''
+
+echo '✅ Fetch Statamic'
+echo ''
+docker-compose exec -u vvuser tooling composer update
+echo ''
+
+echo '- create .env file'
+cp ./.env.example ./.env
+
+echo '✅ Generate Laravel Key'
+docker-compose exec -u vvuser application php artisan key:generate
+echo ''
+
+echo '✅ Npm install'
+docker-compose exec -u vvuser tooling npm install
+echo ''
+
+echo '✅ Compile frontend assets'
+echo '-----------------------'
+docker-compose exec -u vvuser tooling npm run dev
+echo ''
+
+echo '✅ Load quality lists'
+echo '-----------------------'
+git clone git@git.visuellverstehen.de:visuel/quality_checklists.git quality_checklists
+mv quality_checklists/quality-checklist-web-development.md .
+mv quality_checklists/quality-checklist-editing.md .
+rm -rf quality_checklists
+echo ''
+
+echo '✅ Load linting configuration files'
+echo '-----------------------'
+git clone git@git.visuellverstehen.de:visuel/linting.git linting
+mv linting/.editorconfig .
+mv linting/.eslintrc.json .
+mv linting/.stylelintrc.json .
+rm -rf linting/
+
+echo '✅ Initialize git'
+echo '-----------------------'
+git init
+echo ''
+
+echo '✅ Remove stinit files'
+echo '-----------------------'
+rm ./.gitlab-ci.yml
+mv _.gitlab-ci.yml .gitlab-ci.yml
+rm -- "$0"
+echo ''
+
+echo '✅ Ignore content from now on'
+echo '-----------------------'
+echo 'content/**/*' >> ./.gitignore
+echo ''
+
+echo 'Enjoy the flat file web revolution 🚀️'
+echo '-----------------------'
+echo ''

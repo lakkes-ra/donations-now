@@ -1,0 +1,58 @@
+sections:
+  404:
+    display: '404'
+    fields:
+      -
+        handle: title
+        field:
+          input_type: text
+          antlers: false
+          display: Titel
+          type: text
+          icon: text
+          instructions: 'Titel der Error-Seite'
+          listable: hidden
+          instructions_position: above
+      -
+        handle: text
+        field:
+          antlers: false
+          display: 'Kurze Beschreibung'
+          type: textarea
+          icon: textarea
+          listable: hidden
+          instructions_position: above
+      -
+        handle: button
+        field:
+          default: false
+          display: 'Ansicht eines Buttons'
+          type: toggle
+          icon: toggle
+          instructions: 'Soll ein Button angezeigt werden, er zu einer anderen Seite zurück verlinkt?'
+          listable: hidden
+          instructions_position: above
+      -
+        handle: button_text
+        field:
+          input_type: text
+          antlers: false
+          display: Button-Text
+          type: text
+          icon: text
+          instructions: 'Sichtbarer Text im Button'
+          width: 50
+          listable: hidden
+          instructions_position: above
+          if:
+            button: 'equals true'
+      -
+        handle: button_entry
+        field: common.entry
+        config:
+          display: 'Verknüpfte Seite'
+          width: 50
+          collections:
+            - pages
+          if:
+            button: 'equals true'

@@ -1,0 +1,17 @@
+{{ match_redirect globalset='redirects' url='{current_uri}' }}
+    {{ if url-type === 'internal' }}
+        {{ redirect to='{entry:url}' response='{response}' }}
+    {{ elseif url-type === 'external' }}
+        {{ redirect to='{url-external}' response='{response}' }}
+    {{ /if }}
+{{ /match_redirect }}
+
+<section class="flex items-center justify-center h-screen">
+  <article class="font-mono text-center">
+    <h1 class="text-2xl"><strong>{{ error-messages:title }}</strong></h1>
+    <p>{{ error-messages:text }}</p>
+    {{ if error-messages:button }}
+      <a href="{{ error-messages:button_entry:url }}" aria-label="{{ error-messages:button_text }}" class="block underline">{{ error-messages:button_text }}</a>
+    {{ /if }}
+  </article>
+</section>

@@ -1,0 +1,51 @@
+version: '3.3'
+
+networks:
+  web:
+    external: true
+  stack:
+    external: false
+
+services:
+  application:
+    build:
+      context: .
+      dockerfile: docker/application/application.Dockerfile
+      args:
+        USER_ID: $USER_ID
+        GROUP_ID: $GROUP_ID
+    extra_hosts:
+      - 'stinit.localhost:127.0.0.1'
+      - 'stinit.localhost.visuellverstehen.de:127.0.0.1'
+    networks:
+      web:
+        aliases:
+          - stinit.localhost
+          - stinit.localhost.visuellverstehen.de
+          - stinit.vscode.visuellverstehen.de
+      stack:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.stinit.rule=Host(`stinit.localhost`,`stinit.localhost.visuellverstehen.de`,`stinit.vscode.visuellverstehen.de`)"
+      - "traefik.http.routers.stinit.entrypoints=web"
+      - "traefik.http.services.stinit.loadbalancer.server.port=80"
+      - "traefik.docker.network=web"
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    restart: always
+
+  tooling:
+    build:
+      context: .
+      dockerfile: docker/tooling/tooling.Dockerfile
+      args:
+        USER_ID: $USER_ID
+        GROUP_ID: $GROUP_ID
+    networks:
+      - stack
+    tty: true
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    restart: always

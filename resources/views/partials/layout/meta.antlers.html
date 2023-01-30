@@ -1,0 +1,251 @@
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+{{# No index and no follow #}}
+{{ if environment == 'production' }}
+    {{ if seo_noindex & seo_nofollow }}
+        <meta name="robots" content="noindex, nofollow">
+    {{ elseif seo_nofollow }}
+        <meta name="robots" content="nofollow">
+    {{ elseif seo_noindex }}
+        <meta name="robots" content="noindex">
+    {{ /if }}
+{{ else }}
+    <meta name="robots" content="noindex, nofollow">
+{{ /if }}
+
+{{# hreflang tags #}}
+{{ locales }}
+    <link rel="alternate" hreflang="{{ locale:full replace="_|-" }}" href="{{ permalink }}">
+{{ /locales }}
+
+{{# Page title #}}
+<title>
+    {{ yield:seo_title }}
+    {{ seo_title ? seo_title : title | linebreaks:hide }}
+    {{ seo:title_separator ? seo:title_separator : " &#124; " }}
+    {{ seo:site_name ? seo:site_name : site:name }}
+</title>
+
+{{# Page author #}}
+{{ if seo:seo_author }}
+    <meta name="author" content="{{ seo:seo_author }}">
+{{ /if }}
+
+{{# Page description #}}
+{{ if seo_description }}
+    <meta name="description" content="{{ seo_description }}">
+{{ elseif seo:seo_description }}
+    <meta name="description" content="{{ seo:seo_description }}">
+{{ /if }}
+
+{{# Canonical URL #}}
+{{ if seo_canonical_type == 'current' }}
+    <link rel="canonical" href="{{ config:app:url }}{{ seo_canonical_current | url }}">
+{{ elseif seo_canonical_type == 'external' }}
+    <link rel="canonical" href="{{ seo_canonical_external }}">
+{{ elseif seo_canonical_type == 'entry' }}
+    <link rel="canonical" href="{{ permalink }}">
+{{ /if }}
+
+{{# Auto add pagination link's when using resources/views/components/_pagination.antlers.html. #}}
+{{ yield:pagination }}
+
+{{# Knowledge graph JSON-ld #}}
+{{ if seo:json_ld_type && seo:json_ld_type != 'none' }}
+    <script type="application/ld+json" id="schema">
+        {{ if seo:json_ld_type == 'organization'  }}
+            {
+                "@context": "http://schema.org",
+                "@type": "Organization",
+                "name": "{{ seo:organization_name }}",
+                "url": "{{ config:app:url }}{{ homepage }}"{{ if seo:organization_logo }},
+                "logo": "{{ config:app:url }}{{ glide:seo:organization_logo width='336' height='336' fit='contain' }}"{{ /if }}
+            }
+        {{ elseif seo:json_ld_type == 'person' }}
+            {
+                "@context": "http://schema.org",
+                "@type": "Person",
+                "url": "{{ config:app:url }}{{ homepage }}",
+                "name": "{{ seo:person_name }}"
+            }
+        {{ elseif seo:json_ld_type == 'custom' }}
+            {{ seo:json_ld }}
+        {{ /if }}
+    </script>
+{{ /if }}
+
+{{ if schema_jsonld  }}
+    <script type="application/ld+json">{{ schema_jsonld }}</script>
+{{ /if }}
+
+{{# Breadcrumbs JSON-ld #}}
+{{ if seo:breadcrumbs && segment_1 }}
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {{ nav:breadcrumbs }}
+                    {
+                        "@type": "ListItem",
+                        "position": {{ count }},
+                        "name": "{{ title | linebreaks:hide }}",
+                        "item": "{{ permalink }}{{ url }}"
+                    } {{ unless last}},{{ /unless}}
+                {{ /nav:breadcrumbs }}
+            ]
+        }
+    </script>
+{{ /if }}
+
+{{# Open Graph #}}
+<meta property="og:site_name" content="{{ seo:site_name ? seo:site_name : site:name }}">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="{{ site:locale }}">
+{{ if og_title }}
+    <meta property="og:title" content="{{ og_title }}">
+{{ else }}
+    <meta property="og:title" content="{{ seo_title ? seo_title : title | linebreaks:hide }}">
+{{ /if }}
+{{ if og_description }}
+    <meta property="og:description" content="{{ og_description }}">
+{{ elseif seo_description }}
+    <meta property="og:description" content="{{ seo_description }}">
+{{ /if }}
+{{ if og_image }}
+    <meta property="og:image" content="{{ glide:og_image width='1200' height='630' fit='crop_focal' absolute="true" }}">
+{{ elseif seo:og_image }}
+    <meta property="og:image" content="{{ glide:seo:og_image width='1200' height='630' fit='crop_focal' absolute="true" }}">
+{{ /if }}
+<meta property="og:url" content="{{ current_url }}">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="{{ site:short_locale }}" />
+
+{{# Twitter #}}
+{{ if twitter_image or seo:twitter_image }}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="{{ seo:twitter_handle }}">
+    {{ if og_title }}
+        <meta name="twitter:title" content="{{ og_title }}">
+    {{ else }}
+        <meta name="twitter:title" content="{{ seo_title ? seo_title : title | linebreaks:hide }}">
+    {{ /if }}
+    {{ if og_description }}
+        <meta name="twitter:description" content="{{ og_description }}">
+    {{ elseif seo_description }}
+        <meta name="twitter:description" content="{{ seo_description }}">
+    {{ /if }}
+    {{ if twitter_image }}
+        <meta name="twitter:image" content="{{ glide:twitter_image width='1200' height='600' fit='crop_focal' absolute="true" }}">
+        {{ asset :url="twitter_image:alt" }}
+            {{ if alt }}
+                <meta name="twitter:image:alt" content="{{ alt ensure_right='.' }}">
+            {{ /if }}
+        {{ /asset }}
+    {{ elseif seo:twitter_image }}
+        <meta name="twitter:image" content="{{ glide:seo:twitter_image width='1200' height='600' fit='crop_focal' absolute="true" }}">
+        {{ asset :url="seo:twitter_image" }}
+            {{ if alt }}
+                <meta name="twitter:image:alt" content="{{ alt ensure_right='.' }}">
+            {{ /if }}
+        {{ /asset }}
+    {{ /if }}
+{{ /if }}
+
+{{# Trackers #}}
+{{ if environment == 'production' }}
+    <script>
+        window.trackers = {
+        registeredTrackers: [],
+        register: (func) => {
+            window.trackers.registeredTrackers.push(func);
+        },
+        load: () => {
+            // Remember to check for consent here.
+            // Uncomment the following line when using the CookieNotice addon:
+            // if (! window.cookieNotice.hasConsent("analytics")) { return; }
+            
+            window.trackers.registeredTrackers.forEach((tracker) => {
+                tracker();
+            });
+        }
+        };
+    </script>
+
+    {{ if seo:tracker_type == 'gtm' }}
+        <script>
+            window.googleTagManager = (w,d,s,l,i) => {
+                w[l]=w[l]||[];
+                w[l].push({
+                    'gtm.start': new Date().getTime(),
+                    event:'gtm.js'
+                });
+                var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+                j.async=true;
+                j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+                f.parentNode.insertBefore(j,f);
+            };
+
+            window.trackers.register(() => {
+                window.googleTagManager(
+                window, document,'script' ,'dataLayer' , '{{ seo:google_tag_manager }}'
+                );
+            });
+        </script>
+    {{ elseif seo:tracker_type == 'ga' }}
+        <script>
+            window.googleAnalytics = (a,b,c) => {var d=a.history,e=document,f=navigator||{},g=localStorage,
+            h=encodeURIComponent,i=d.pushState,k=function(){return Math.random().toString(36)},
+            l=function(){return g.cid||(g.cid=k()),g.cid},m=function(r){var s=[];for(var t in r)
+            r.hasOwnProperty(t)&&void 0!==r[t]&&s.push(h(t)+"="+h(r[t]));return s.join("&")},
+            n=function(r,s,t,u,v,w,x){var z="https://www.google-analytics.com/collect",
+            A=m({v:"1",ds:"web",aip:c.anonymizeIp?1:void 0,tid:b,cid:l(),t:r||"pageview",
+            sd:c.colorDepth&&screen.colorDepth?screen.colorDepth+"-bits":void 0,dr:e.referrer||
+            void 0,dt:e.title,dl:e.location.origin+e.location.pathname+e.location.search,ul:c.language?
+            (f.language||"").toLowerCase():void 0,de:c.characterSet?e.characterSet:void 0,
+            sr:c.screenSize?(a.screen||{}).width+"x"+(a.screen||{}).height:void 0,vp:c.screenSize&&
+            a.visualViewport?(a.visualViewport||{}).width+"x"+(a.visualViewport||{}).height:void 0,
+            ec:s||void 0,ea:t||void 0,el:u||void 0,ev:v||void 0,exd:w||void 0,exf:"undefined"!=typeof x&&
+            !1==!!x?0:void 0});if(f.sendBeacon)f.sendBeacon(z,A);else{var y=new XMLHttpRequest;
+            y.open("POST",z,!0),y.send(A)}};d.pushState=function(r){return"function"==typeof d.onpushstate&&
+            d.onpushstate({state:r}),setTimeout(n,c.delay||10),i.apply(d,arguments)},n(),
+            a.ma={trackEvent:function o(r,s,t,u){return n("event",r,s,t,u)},
+            trackException:function q(r,s){return n("exception",null,null,null,null,r,s)}}};
+            
+            window.trackers.register(() => {
+                window.googleAnalytics(
+                window,
+                '{{ seo:google_analytics }}',
+                {anonymizeIp:{{ seo:anonymize_ip ? 'true' : 'false' }},colorDepth:true,characterSet:true,screenSize:true,language:true}
+                );
+            });
+        </script>
+    {{ /if }}
+
+    {{# Yield this section in all your layouts after opening the <body> #}}
+    {{ section:seo_body }}
+        {{ if seo:tracker_type == 'gtm' }}
+            <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ seo:google_tag_manager }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+            {{ if seo:use_cookie_banner }}
+                {{ partial:components/cookie_banner }}
+            {{ /if }}
+        {{ /if }}
+    {{ /section:seo_body }}
+
+    {{ if seo:use_google_site_verification }}
+        <meta name="google-site-verification" content="{{ seo:google_site_verification }}" />
+    {{ /if }}
+
+    {{ if seo:use_plausible }}
+        <script async defer data-domain="{{ seo:plausible }}" src="https://plausible.io/js/plausible.js"></script>
+    {{ /if }}
+
+    {{ if seo:use_cloudflare_web_analytics }}
+        <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "{{ seo:cloudflare_web_analytics }}"}'></script>
+    {{ /if }}
+
+    {{# load all registered trackers, if consent has been given #}}
+    <script>window.trackers.load();</script>
+{{ /if }}

@@ -1,0 +1,433 @@
+sections:
+  meta:
+    display: 'Meta Angaben'
+    fields:
+      -
+        handle: section_title
+        field:
+          type: section
+          instructions: 'Titel der Webseite'
+          display: Titel
+      -
+        handle: title_separator
+        field:
+          options:
+            ' | ': '|'
+            ' - ': '-'
+            ' / ': /
+            ' :: ': '::'
+            ' > ': '>'
+            ' ~ ': '~'
+          clearable: false
+          multiple: false
+          searchable: true
+          taggable: false
+          push_tags: false
+          cast_booleans: false
+          type: select
+          instructions: 'Auswahl an Zeichen, um Webseiten-Titel und Seiten-Titel zu trennen.'
+          width: 33
+          listable: hidden
+          display: Trennzeichen
+      -
+        handle: site_name
+        field:
+          input_type: text
+          type: text
+          localizable: true
+          listable: hidden
+          display: 'Titel der Webseite'
+          instructions: 'Standartisiert wird Laravel''s App Name ausgespielt.'
+          width: 66
+      -
+        handle: section_additional_meta
+        field:
+          display: 'Weitere Meta Angaben'
+          type: section
+          icon: section
+          instructions: 'z.B. Beschreibung und Autor der Seite'
+          listable: hidden
+          instructions_position: above
+          read_only: false
+      -
+        handle: seo_author
+        field:
+          input_type: text
+          antlers: false
+          display: 'Meta Autor'
+          type: text
+          icon: text
+          instructions: 'Autor der Seite'
+          listable: hidden
+          instructions_position: above
+          read_only: false
+      -
+        handle: seo_description
+        field:
+          character_limit: '160'
+          antlers: false
+          display: 'Meta Beschreibung'
+          type: textarea
+          icon: textarea
+          instructions: 'Der Text dient als standardisierte Meta Beschreibung und kann pro Seite überschrieben werden. Max. Zeichenlänge beträgt 160 Zeichen.'
+          listable: hidden
+          instructions_position: above
+          read_only: false
+  json-ld:
+    display: JSON-LD
+    fields:
+      -
+        handle: section_schema
+        field:
+          type: section
+          instructions: 'JSON-LD Schema'
+          display: 'Knowledge graph Daten'
+      -
+        handle: json_ld_type
+        field:
+          options:
+            none: Keine
+            organization: Institution
+            person: Person
+            custom: Benutzerdefiniert
+          default: none
+          type: button_group
+          instructions: 'Datentyp, der auf jeder Seite hinzugefügt wird.'
+          listable: false
+          display: Datentyp
+      -
+        handle: organization_name
+        field:
+          input_type: text
+          type: text
+          localizable: true
+          listable: hidden
+          display: 'Name der Institution'
+          width: 50
+          if:
+            json_ld_type: 'equals organization'
+          validate:
+            - 'required_if:json_ld_type,organization'
+      -
+        handle: organization_logo
+        field: common.image
+        config:
+          listable: hidden
+          display: 'Logo der Institution'
+          instructions: 'Minimum 112px x 112px<br>Logo wird zu einem Rechteck beschnitten.'
+          width: 50
+          if:
+            json_ld_type: 'equals organization'
+      -
+        handle: person_name
+        field:
+          listable: hidden
+          display: 'Name der Person'
+          width: 66
+          input_type: text
+          type: text
+          localizable: true
+          if:
+            json_ld_type: 'equals person'
+          validate:
+            - 'required_if:json_ld_type,person'
+      -
+        handle: json_ld
+        field:
+          type: textarea
+          instructions: 'Benutzerdefinierte JSON-LD wird zu jeder Seite hinzugefügt.<br>Hier können z.B. Informationen zu Öffnungszeiten oder Kontaktdaten hinterlegt werden.'
+          localizable: true
+          listable: false
+          display: JSON-LD
+          if:
+            json_ld_type: 'equals custom'
+          validate:
+            - 'required_if:json_ld_type,custom'
+      -
+        handle: section_breadcrumbs
+        field:
+          type: section
+          instructions: 'JSON-LD Breadcrumbs'
+          display: Breadcrumbs
+      -
+        handle: breadcrumbs
+        field:
+          type: toggle
+          instructions: 'Sollen JSON-LD Breadcrumbs zu jeder Seite hinzugefügt werden?'
+          listable: false
+          display: Breadcrumbs
+  social:
+    display: Social
+    fields:
+      -
+        handle: section_og
+        field:
+          type: section
+          instructions: 'Open Graph Meta-Tags'
+          display: Social
+      -
+        handle: og_image
+        field: common.image
+        config:
+          listable: hidden
+          display: 'Open Graph Bild'
+          instructions: 'Das hinterlegte Bild dient als standardisiertes OG-Bild, kann aber pro Seite überschrieben werden. Die empfohlene Größe beträgt 1200px x 630px und das Bild wird zu dieser Größe beschnitten.'
+          width: 50
+      -
+        handle: twitter_image
+        field: common.image
+        config:
+          listable: hidden
+          display: 'Twitter Bild'
+          instructions: 'Das hinterlegte Bild dient als standardisiertes Twitter Bild, kann aber pro Seite überschrieben werden. Das Bild sollte ein Seitenverhältnis von 2:1 mit einer minimalen Größe von 300px x 157px aufweisen und wird zu dieser Größe beschnitten.'
+          width: 50
+      -
+        handle: twitter_handle
+        field:
+          listable: hidden
+          display: 'Benutzername auf Twitter'
+          width: 50
+          input_type: text
+          type: text
+          localizable: true
+          instructions: 'Der Benutzername auf Twitter wird in der Vorschau eingefügt.'
+          prepend: '@'
+          antlers: false
+  sitemap:
+    display: Sitemap
+    fields:
+      -
+        handle: section_sitemap
+        field:
+          type: section
+          instructions: 'Konfiguration der sitemap.xml'
+          display: Sitemap
+      -
+        handle: sitemap_collections
+        field:
+          mode: select
+          type: collections
+          instructions: 'Sammlungen, die in der sitemap.xml aufgelistet werden sollen.'
+          listable: hidden
+          default: pages
+          display: Sammlungen
+  trackers:
+    display: Tracker
+    fields:
+      -
+        handle: section_verification
+        field:
+          type: section
+          instructions: 'Konfiguration der Verifikationen.'
+          display: 'Verifikationen der Seiten'
+      -
+        handle: use_google_site_verification
+        field:
+          type: toggle
+          instructions: 'Soll der Meta-Tag zur Google-Seitenverifikation hinzugefügt werden?'
+          listable: false
+          display: 'Verifikation der Seite für Google'
+      -
+        handle: google_site_verification
+        field:
+          input_type: text
+          type: text
+          localizable: true
+          listable: hidden
+          width: 66
+          display: Verifikations-Key
+          validate:
+            - 'required_if:use_google_site_verification,true'
+          if:
+            use_google_site_verification: 'equals true'
+      -
+        handle: section_privacy_trackers
+        field:
+          type: section
+          instructions: 'Konfiguration von datenschutzfreundlichen Trackern, die keine Cookie-Benachrichtigung benötigen.'
+          display: 'Datenschutzfreundliche Tracker'
+      -
+        handle: use_plausible
+        field:
+          type: toggle
+          instructions: 'Soll der Plausible-Tacking-Code hinzugefügt werden?'
+          listable: false
+          display: Plausible
+      -
+        handle: plausible
+        field:
+          width: 66
+          display: 'Seiten ID'
+          input_type: text
+          type: text
+          localizable: true
+          listable: hidden
+          validate:
+            - 'required_if:use_plausible,true'
+          if:
+            use_plausible: 'equals true'
+      -
+        handle: use_cloudflare_web_analytics
+        field:
+          type: toggle
+          instructions: 'Soll Cloudflare-Tracking hinzugefügt werden?'
+          listable: false
+          display: 'Cloudflare Web Analytics'
+      -
+        handle: cloudflare_web_analytics
+        field:
+          width: 66
+          display: 'Beacon ID'
+          input_type: text
+          type: text
+          localizable: true
+          listable: hidden
+          validate:
+            - 'required_if:use_cloudflare_web_analytics,true'
+          if:
+            use_cloudflare_web_analytics: 'equals true'
+      -
+        handle: section_google_trackers
+        field:
+          type: section
+          instructions: 'Konfiguration der Google-Tracker und optionale Coockie-Benachrichtigungen.'
+          display: 'Google Trackers'
+      -
+        handle: tracker_type
+        field:
+          options:
+            none: Keine
+            ga: 'Google Analytics'
+            gtm: 'Google Tag Manager'
+          default: none
+          type: button_group
+          instructions: 'Typ des Google-Trackers, der auf jeder Seite hinzugefügt wird.'
+          listable: false
+          display: 'Google-Tracker Typ'
+      -
+        handle: google_analytics
+        field:
+          width: 50
+          display: 'Tracking ID'
+          input_type: text
+          type: text
+          localizable: true
+          instructions: 'Analytics-Tracking ID.<br>*Notiz: Falls keine IP-Anonymisierung stattfindet, muss in der EU eine Coockie-Einwilligung erfolgen. In diesem Fall sollte der Google Tag Manager genutzt werden, um Analytics-Tracking Skripte und einen Cookie-Banner zu laden.*'
+          listable: hidden
+          validate:
+            - 'required_if:tracker_type,ga'
+          if:
+            tracker_type: 'equals ga'
+      -
+        handle: anonymize_ip
+        field:
+          type: toggle
+          width: 50
+          listable: false
+          default: true
+          display: IP-Anonymisierung
+          instructions: 'Soll die IP-Anonymisierung aktiviert werden, um die Cookie-Einwilligung zu umgehen?'
+          if:
+            tracker_type: 'equals ga'
+      -
+        handle: google_tag_manager
+        field:
+          input_type: text
+          type: text
+          localizable: true
+          listable: hidden
+          width: 50
+          display: 'Tracking ID'
+          instructions: 'Die Google Tag Manager Tracking ID.'
+          validate:
+            - 'required_if:tracker_type,gtm'
+          if:
+            tracker_type: 'equals gtm'
+      -
+        handle: use_cookie_banner
+        field:
+          type: toggle
+          instructions: 'Aktivierung des Cookie-Banners. Versicheren Sie sich, dass alle Tracking Skripte via GTM geladen werden und das GTM nur aktiviert wird, sobald eine Cookie-Einwilligung erfolgt ist.'
+          listable: false
+          display: Cookie-Banner
+          width: 50
+          if:
+            tracker_type: 'equals gtm'
+      -
+        handle: cookie_expiration_days
+        field:
+          input_type: number
+          prepend: Nach
+          append: Tagen
+          antlers: false
+          display: 'Löschen der Cookie-Einwilligung'
+          type: text
+          icon: text
+          instructions: 'Nach wie vielen Tagen soll die Cookie-Einwilligung auslaufen, sodass die Einwilligung neu bestätigt werden muss?'
+          listable: hidden
+          width: 50
+          default: 365
+          if:
+            tracker_type: 'equals gtm'
+            use_cookie_banner: 'equals true'
+      -
+        handle: cookie_revoke_before
+        field:
+          mode: single
+          time_enabled: false
+          time_required: false
+          earliest_date: '1900-01-01'
+          full_width: false
+          inline: false
+          columns: 1
+          rows: 1
+          display: 'Widerrufen von Einwilligungen'
+          instructions: 'Widerrufung von allen Cookie-Einwilligungen vor einem bestimmten Datum. Dies kann genutzt werden, wenn neue Tracker zum GTM oder neue Verordnungen hinzugefügt wurden. Der Cookie-Banner erscheint erneut.'
+          type: date
+          width: 50
+          icon: date
+          listable: hidden
+          if:
+            tracker_type: 'equals gtm'
+            use_cookie_banner: 'equals true'
+      -
+        handle: link_privacy_statement
+        field:
+          options:
+            none: Keine
+            entry: Seite
+            pdf: PDF
+          default: none
+          type: button_group
+          instructions: 'Link, der zur Datenschutzerklärung oder zur Cookie-Richtlinie führt.'
+          listable: false
+          display: 'Link zu mehr Informationen'
+          width: 50
+          if:
+            tracker_type: 'equals gtm'
+            use_cookie_banner: 'equals true'
+      -
+        handle: privacy_statement_asset
+        field: common.image
+        config:
+          listable: hidden
+          display: 'Datenschutzerklärung (PDF)'
+          instructions: 'Möglichkeit zur Verlinkung eines PDF''s.'
+          width: 50
+          if:
+            tracker_type: 'equals gtm'
+            use_cookie_banner: 'equals true'
+            link_privacy_statement: 'equals pdf'
+      -
+        handle: privacy_statement_entry
+        field: common.entry
+        config:
+          listable: hidden
+          display: 'Datenschutzerklärung (Seite)'
+          localizable: true
+          width: 50
+          instructions: 'Möglichkeit zur Verlinkung einer Seite.'
+          if:
+            tracker_type: 'equals gtm'
+            use_cookie_banner: 'equals true'
+            link_privacy_statement: 'equals entry'
