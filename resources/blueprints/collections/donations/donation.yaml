@@ -9,28 +9,6 @@ sections:
           required: true
           validate:
             - required
-      -
-        handle: description
-        field:
-          antlers: false
-          display: Beschreibung
-          type: textarea
-          icon: textarea
-          listable: hidden
-          instructions_position: above
-          visibility: visible
-          always_save: false
-      -
-        handle: amount
-        field:
-          append: €
-          display: Betrag
-          type: integer
-          icon: integer
-          listable: hidden
-          instructions_position: above
-          visibility: visible
-          always_save: false
   sidebar:
     display: Sidebar
     fields:
